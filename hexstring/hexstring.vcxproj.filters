@@ -18,9 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="hex_tool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.hpp">
+    <ClInclude Include="hex_tool.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
