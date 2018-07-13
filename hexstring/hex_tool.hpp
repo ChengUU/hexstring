@@ -12,6 +12,5 @@ void bytesToHex(const vector<char>& input, string & output, bool upperCase = tru
 void hexToBytes(const char * input, string& output);
 void bytesToHex(const char * input, string & output, bool upperCase = true);
 //debug¹¤¾ß
-void hexStrToHexDebug(const char * hexStr, string& debugStr, size_t rowBytesCount = 16);
 void bytesToHexDebug(const vector<char>& rawBytes,string& debugStr,size_t rowBytesCount=16 , bool upperCase = true);
 void bytesToHexDebug(const char * rawBytes, string& debugStr, size_t rowBytesCount = 16, bool upperCase = true);
