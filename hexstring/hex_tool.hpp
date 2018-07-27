@@ -6,11 +6,13 @@
 
 //char数组转换
 inline void hexToBytes(const char * input, std::vector<char>& output);
+inline void bytesToHex(const std::vector<char>::const_iterator& itBegin, const std::vector<char>::const_iterator& itEnd, std::string & output, bool upperCase = true);
 inline void bytesToHex(const std::vector<char>& input, std::string & output, bool upperCase = true);
 //c字符串转换
 inline void hexToBytes(const char * input, std::string& output);
 inline void bytesToHex(const char * input, std::string & output, bool upperCase = true);
 //debug工具
+inline void bytesToHexDebug(const std::vector<char>::const_iterator& rawBytesBegin, const std::vector<char>::const_iterator& rawBytesEnd, std::string& debugStr, std::size_t rowBytesCount = 16, bool upperCase = true);
 inline void bytesToHexDebug(const std::vector<char>& rawBytes, std::string& debugStr, std::size_t rowBytesCount = 16, bool upperCase = true);
 inline void bytesToHexDebug(const char * rawBytes, std::string& debugStr, std::size_t rowBytesCount = 16, bool upperCase = true);
 
@@ -58,8 +60,9 @@ void hexToBytes(const char * input, std::string& output) {
 	}
 }
 
-void bytesToHex(const std::vector<char>& input, std::string & output, bool upperCase) {
-	size_t leng = input.size() * 2;
+void bytesToHex(const std::vector<char>::const_iterator& itBegin, const std::vector<char>::const_iterator& itEnd, std::string & output, bool upperCase)
+{
+	size_t leng = static_cast<size_t>((itEnd - itBegin) * 2);
 	output.resize(leng);
 	output.clear();
 	size_t inputIndex;
@@ -68,15 +71,14 @@ void bytesToHex(const std::vector<char>& input, std::string & output, bool upper
 		if (i % 2 == 0) {
 			//字符前4位
 			inputIndex = i / 2;
-			tmpChar = (unsigned char)input[inputIndex];
+			tmpChar = static_cast<unsigned char>(*(itBegin + inputIndex));
 			tmpChar = tmpChar >> 4;
 		}
 		else {
 			//字符后4位
 			inputIndex = (i - 1) / 2;
-			tmpChar = (unsigned char)input[inputIndex];
+			tmpChar = static_cast<unsigned char>(*(itBegin + inputIndex));
 			tmpChar = tmpChar & 0xf;
-			//output.append(1, tmpChar & 0xf);
 		}
 		if ((tmpChar >= 0) && (tmpChar <= 9)) {
 			tmpChar += '0';
@@ -93,6 +95,10 @@ void bytesToHex(const std::vector<char>& input, std::string & output, bool upper
 	}
 }
 
+void bytesToHex(const std::vector<char>& input, std::string & output, bool upperCase) {
+	bytesToHex(input.begin(), input.end(), output, upperCase);
+}
+
 void bytesToHex(const char * input, std::string & output, bool upperCase) {
 	size_t inputLength = strlen(input);
 	std::vector<char> inputArr(inputLength);
@@ -104,9 +110,10 @@ void bytesToHex(const char * input, std::string & output, bool upperCase) {
 }
 
 //debug工具
-void bytesToHexDebug(const std::vector<char>& rawBytes, std::string& debugStr, size_t rowBytesCount, bool upperCase) {
+void bytesToHexDebug(const std::vector<char>::const_iterator& rawBytesBegin, const std::vector<char>::const_iterator& rawBytesEnd, std::string& debugStr, std::size_t rowBytesCount, bool upperCase)
+{
 	std::string hexStr;
-	bytesToHex(rawBytes, hexStr, upperCase);
+	bytesToHex(rawBytesBegin, rawBytesEnd, hexStr, upperCase);
 	debugStr.clear();
 	debugStr.append(rowBytesCount * 4, '=');
 	std::string tmpStr;
@@ -125,7 +132,7 @@ void bytesToHexDebug(const std::vector<char>& rawBytes, std::string& debugStr, s
 			else {
 				debugStr.append(" ");
 			}
-			tmpChar = (unsigned char)rawBytes[i / 2];
+			tmpChar = static_cast<unsigned char> (*(rawBytesBegin + i / 2));
 			if ((tmpChar >= 0x20) && (tmpChar <= 0x7e)) {
 				//可显示ascii字符范围
 				tmpStr.append(1, tmpChar);
@@ -144,6 +151,9 @@ void bytesToHexDebug(const std::vector<char>& rawBytes, std::string& debugStr, s
 	debugStr.append(tmpStr);
 	debugStr.append("\r\n");
 	debugStr.append(rowBytesCount * 4, '=');
+}
+void bytesToHexDebug(const std::vector<char>& rawBytes, std::string& debugStr, size_t rowBytesCount, bool upperCase) {
+	bytesToHexDebug(rawBytes.begin(), rawBytes.end(), debugStr, rowBytesCount, upperCase);
 }
 
 void bytesToHexDebug(const char * rawBytes, std::string& debugStr, size_t rowBytesCount, bool upperCase) {
